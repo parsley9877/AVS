@@ -100,34 +100,3 @@ class BasicPreprocessing(keras.Model):
         """
         x = self.inverse_process_layers(input_data)
         return x
-
-
-# if __name__ == '__main__':
-#     ad_data = np.random.uniform(0.0, 255.0, size=[750]).reshape([5, 2, 5, 5, 3])
-#     # ad_data = (0*np.ones(6000)).reshape([20, 10, 10, 3])
-#     adapt_data = tf.constant(ad_data, dtype=tf.float32)
-#     processor = BasicPreprocessing(mode='type4', channel=3, mean=[0.5, 0.5, 0.5],
-#                               var=[0.25, 0.25, 0.25], adaption_data=adapt_data)
-#     processed_data = processor.process(adapt_data)
-#     reconstructed_data = processor.inverse_process(processed_data)
-#
-#     print(adapt_data)
-#     print(processed_data)
-#     print(reconstructed_data)
-#     print((tf.experimental.numpy.allclose(adapt_data, reconstructed_data)))
-#
-#     print(adapt_data.shape)
-#     print(processed_data.shape)
-#     print(reconstructed_data.shape)
-#     print((tf.experimental.numpy.allclose(adapt_data, reconstructed_data)))
-#
-#     print(tf.math.reduce_mean(adapt_data[:,:,:,:,0]))
-#     print(tf.math.reduce_mean(processed_data[:,:,:,:,0]))
-#     print(tf.math.reduce_variance(adapt_data[:,:,:,0]))
-#     print(tf.math.reduce_variance(processed_data[:,:,:,:,0]))
-#
-#     plt.imshow(adapt_data.numpy()[0][0]/255.0)
-#     plt.figure()
-#     plt.imshow(reconstructed_data.numpy()[0][0]/255.0)
-#
-#     plt.show()

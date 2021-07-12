@@ -5,3 +5,4 @@ tensorflow
 librosa
 scipy
 python_speech_features
+sacred

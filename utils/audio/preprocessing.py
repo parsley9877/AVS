@@ -54,18 +54,3 @@ class MFCC(keras.Model):
         """
         signal_numpy = signal.numpy()
         return tf.constant(mfcc(signal_numpy, **self.specs), dtype=tf.float32)
-
-
-if __name__ == '__main__':
-    """
-    Testing MFCC on './audio.wav' with './MFCC_config'
-    """
-    rate, data = wavfile.read('./audio.wav')
-    with open('./MFCC_config.json') as json_obj:
-        mfcc_config = json.load(json_obj)
-    mfcc_config['winfunc'] = eval(mfcc_config['winfunc'])
-    mfcc_obj = MFCC(mfcc_config, delta=2)
-    mfcc_out = mfcc_obj.process(tf.constant(data, dtype=tf.float32))
-    print(mfcc_out)
-    print(mfcc_out.shape)
-    print(type(mfcc_out))

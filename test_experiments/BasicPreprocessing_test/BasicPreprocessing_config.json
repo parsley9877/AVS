@@ -1,0 +1,7 @@
+{
+  "mode": "type3",
+  "channel": 3,
+  "mean": [0.5, 0.5, 0.5],
+  "var": [0.25, 0.25, 0.25],
+  "adaption_data": "tf.constant(np.random.uniform(0.0, 255.0, size=[750]).reshape([5, 2, 5, 5, 3]), dtype=tf.float32)"
+}
