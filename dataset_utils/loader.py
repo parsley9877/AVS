@@ -12,7 +12,7 @@ from pathos.multiprocessing import ProcessingPool as Pool
 import time
 from scipy.io import wavfile
 
-class Video2TFRecordKinetic700(object):
+class Video2TFRecord(object):
     """
     Description: Convert all mp4 videos in a path to a tfrecord file
     """
@@ -20,10 +20,18 @@ class Video2TFRecordKinetic700(object):
         pass
 
     def convert(self, in_path, out_path, record_per_file):
+        """
+        Description: This is the function used by user. It gets the root path of some mp4 files
+        and generate some tfrecord files in desired path based on them.
+
+        :param in_path:
+        :param out_path:
+        :param record_per_file:
+        :return:
+        """
         list_of_mp4 = self._get_list_of_files(in_path)
         corrupted_mp4s = corrupted_mp4_finder(in_path)
         good_mp4s = [elem for elem in list_of_mp4 if elem[0] not in corrupted_mp4s]
-        print(len(good_mp4s))
         first_arg = []
         second_arg = []
 
@@ -132,7 +140,7 @@ class Video2TFRecordKinetic700(object):
                 listOfFiles += [(os.path.join(dirpath, file), os.path.basename(dirpath)) for file in filenames if file.endswith('mp4')]
         return listOfFiles
 
-class TFRecord2VideoKinetic700(object):
+class TFRecord2Video(object):
     """
     Description: Convert a tfrecord to a tf dataset and load it
     """
@@ -141,6 +149,12 @@ class TFRecord2VideoKinetic700(object):
         pass
 
     def get_records(self, path_to_record):
+        """
+        Description: this is the function used by user. It gets path to tfr file, and generate a tf.dataset
+        based on it.
+        :param path_to_record:
+        :return:
+        """
         # Create the dataset object from tfrecord file(s)
         raw_dataset = tf.data.TFRecordDataset(path_to_record)
         dataset = raw_dataset.map(self.parse_tfrecord_fn)
@@ -175,11 +189,18 @@ def disp_video(frames, fps):
 
 class VideoShifter(object):
     """
-    Description: Baseclass for shifting a video
+    Description: Baseclass for shifting videos in a directory video
     """
     def __init__(self):
         pass
     def shift(self, path_to_mp4, out_path, shift_number):
+        """
+        Description: Shift a single mp4 file, and store it as a new mp4 in out_path
+        :param path_to_mp4:
+        :param out_path:
+        :param shift_number:
+        :return:
+        """
         # assert out_path.endswith('.mp4')
         try:
             original_clip = VideoFileClip(path_to_mp4)
@@ -201,17 +222,17 @@ class VideoShifter(object):
         shifted_clip.write_videofile(out_path, fps, audio=True)
         original_clip.close()
         return None
-class KineticShifter(VideoShifter):
+class VideoSetShifter(VideoShifter):
     """
-    Description: Class for shifting dataset with Kinetic structure
+    Description: Class for shifting a dataset
     """
-    def __init__(self, path_to_kinetic):
-        super(KineticShifter, self).__init__()
-        self.path = path_to_kinetic
+    def __init__(self, path_to_videos):
+        super(VideoSetShifter, self).__init__()
+        self.path = path_to_videos
         self.train_path = os.path.join(self.path, 'train')
         self.test_path = os.path.join(self.path, 'test')
         self.eval_path = os.path.join(self.path, 'eval')
-    def shift_kinetic(self, num_processes, style):
+    def shift_set(self, num_processes, style):
         shifted_filter(self.train_path)
         shifted_filter(self.test_path)
         shifted_filter(self.eval_path)
@@ -345,53 +366,53 @@ def decode_video(encoded_video_tensor):
         vid.append(tf.io.decode_jpeg(frame, channels=3))
     return tf.stack(vid)
 
-def temp(ds, i):
-    for record in ds:
-        audio = (record['audio'])
-        id = record['id']
-        w = record['w']
-        h = record['h']
-        fps = record['fps']
-        num_frames = record['num_frames']
-        audio_shape = record['audio_shape']
-        frames = record['vid']
-        label = record['label']
-        sr = record['sr']
-        break
-    wavfile.write(os.path.join(base_path, str(i) + '.wav'), 44100, audio.numpy())
-    print('id = ', id)
-    print('w = ', w)
-    print('h = ', h)
-    print('fps = ', fps)
-    print('num_frames = ', num_frames)
-    print('audio_shape = ', audio_shape)
-    print('label = ', label)
-    print('sr = ', sr)
-    print('frames = ', decode_video(frames))
-    print('audio = ', audio)
+# def temp(ds, i):
+#     for record in ds:
+#         audio = (record['audio'])
+#         id = record['id']
+#         w = record['w']
+#         h = record['h']
+#         fps = record['fps']
+#         num_frames = record['num_frames']
+#         audio_shape = record['audio_shape']
+#         frames = record['vid']
+#         label = record['label']
+#         sr = record['sr']
+#         break
+#     wavfile.write(os.path.join(base_path, str(i) + '.wav'), 44100, audio.numpy())
+#     print('id = ', id)
+#     print('w = ', w)
+#     print('h = ', h)
+#     print('fps = ', fps)
+#     print('num_frames = ', num_frames)
+#     print('audio_shape = ', audio_shape)
+#     print('label = ', label)
+#     print('sr = ', sr)
+#     print('frames = ', decode_video(frames))
+#     print('audio = ', audio)
+#
 
 
 
-
-if __name__ == '__main__':
-    base_path = './datasets/datasets'
-    kinetic_base_path = './datasets/datasets/Kinetic700'
-    records_path = os.path.join(base_path, 'sample_tfrecords')
-
-    if os.path.exists(records_path):
-        shutil.rmtree(records_path)
-        os.mkdir(records_path)
-
-    converter = Video2TFRecordKinetic700()
-    converter.convert(os.path.join(kinetic_base_path, 'train'), os.path.join(base_path, 'sample_tfrecords'), 20)
-    print([path for path in os.listdir(records_path) if path.endswith('tfrecords')])
-    dec = TFRecord2VideoKinetic700()
-    ds = []
-    for file in [path for path in os.listdir(records_path) if path.endswith('tfrecords')]:
-        ds.append(dec.get_records(os.path.join(records_path, file)))
-
-    for idx, set in enumerate(ds):
-        temp(set, idx)
+# if __name__ == '__main__':
+#     base_path = './datasets/datasets'
+#     kinetic_base_path = './datasets/datasets/Kinetic700'
+#     records_path = os.path.join(base_path, 'sample_tfrecords')
+#
+#     if os.path.exists(records_path):
+#         shutil.rmtree(records_path)
+#         os.mkdir(records_path)
+#
+#     converter = Video2TFRecordKinetic700()
+#     converter.convert(os.path.join(kinetic_base_path, 'train'), os.path.join(base_path, 'sample_tfrecords'), 20)
+#     print([path for path in os.listdir(records_path) if path.endswith('tfrecords')])
+#     dec = TFRecord2VideoKinetic700()
+#     ds = []
+#     for file in [path for path in os.listdir(records_path) if path.endswith('tfrecords')]:
+#         ds.append(dec.get_records(os.path.join(records_path, file)))
+#
+#     for idx, set in enumerate(ds):
+#         temp(set, idx)
 
 
 
