@@ -1,7 +1,6 @@
 import os.path
 import subprocess
 from typing import Iterable
-
 import shutil
 import tensorflow as tf
 import cv2
@@ -11,6 +10,9 @@ from moviepy.editor import VideoFileClip, AudioFileClip
 from pathos.multiprocessing import ProcessingPool as Pool
 import time
 from scipy.io import wavfile
+
+from utils.sys.os_tools import corrupted_mp4_finder, shifted_filter, non_mp4_finder,\
+    bad_mp4_finder, bad_duration_finder, get_list_of_mp4, non_mp4_checker
 
 class Video2TFRecord(object):
     """
@@ -182,11 +184,6 @@ class TFRecord2Video(object):
         return example
 
 
-def disp_video(frames, fps):
-    for i in range(frames.shape[0]):
-        cv2.imshow('video sample', frames[i])
-        cv2.waitKey(int((1 / fps) * 1000))
-
 class VideoShifter(object):
     """
     Description: Baseclass for shifting videos in a directory video
@@ -278,93 +275,6 @@ class VideoSetShifter(VideoShifter):
         pool.join()
         return output_train
 
-def shifted_filter(path):
-    listOfFiles = get_list_of_mp4(path)
-    for file in listOfFiles:
-        if os.path.basename(file).startswith('('):
-            os.remove(file)
-def non_mp4_checker(path):
-    listOfFiles = get_list_of_all_files(path)
-    if False in [file.endswith('.mp4') for file in listOfFiles]:
-        return True
-    return False
-def non_mp4_finder(path):
-    out = []
-    listOfFiles = get_list_of_all_files(path)
-    for elem in listOfFiles:
-        if not elem.endswith('.mp4'):
-            out.append(elem)
-    return out
-def bad_duration_finder(path, low, high):
-    out = []
-    listOfFiles = get_list_of_mp4(path)
-    for elem in listOfFiles:
-        try:
-            clip = VideoFileClip(elem)
-            if clip.duration < low or clip.duration > high:
-                out.append(elem)
-            clip.close()
-        except:
-            pass
-    return out
-def bad_duration_filter(path, low, high):
-    listOfFiles = get_list_of_mp4(path)
-    for elem in listOfFiles:
-        try:
-            clip = VideoFileClip(elem)
-            if clip.duration < low or clip.duration > high:
-                os.remove(elem)
-            clip.close()
-        except:
-            pass
-def bad_mp4_finder(path):
-    out = []
-    listOfFiles = get_list_of_mp4(path)
-    for elem in listOfFiles:
-        try:
-            clip = VideoFileClip(elem)
-            if clip.duration == 0 or clip.fps == 0:
-                out.append(elem)
-            clip.close()
-        except:
-            pass
-    return out
-def bad_mp4_filter(path):
-    listOfFiles = get_list_of_mp4(path)
-    for elem in listOfFiles:
-        try:
-            clip = VideoFileClip(elem)
-            if clip.duration == 0 or clip.fps == 0:
-                os.remove(elem)
-            clip.close()
-        except:
-            pass
-def get_list_of_mp4(path):
-    listOfFiles = list()
-    for (dirpath, dirnames, filenames) in os.walk(path):
-        if False in [(f.endswith('.txt') or f.endswith('.tfrecords') or f.endswith('.csv')) for f in filenames]:
-            listOfFiles += [os.path.join(dirpath, file) for file in filenames if file.endswith('.mp4')]
-    return listOfFiles
-def get_list_of_all_files(path):
-    listOfFiles = list()
-    for (dirpath, dirnames, filenames) in os.walk(path):
-        listOfFiles += [os.path.join(dirpath, file) for file in filenames]
-    return listOfFiles
-def corrupted_mp4_finder(path):
-    out = []
-    listOfFiles = get_list_of_mp4(path)
-    for file in listOfFiles:
-        try:
-            clip = VideoFileClip(file)
-            clip.close()
-        except:
-            out.append(file)
-    return out
-def decode_video(encoded_video_tensor):
-    vid = []
-    for frame in encoded_video_tensor:
-        vid.append(tf.io.decode_jpeg(frame, channels=3))
-    return tf.stack(vid)
 
 # def temp(ds, i):
 #     for record in ds:
