@@ -312,7 +312,10 @@ class Kinetic700Fetcher(DatasetFetcher):
             paths = [self.train_path]*flag_train + [self.eval_path]*flag_eval
             cats = ['train']*flag_train + ['eval']*flag_eval
             labels = self.train_df[0].tolist()[0:flag_train] + self.eval_df[0].tolist()[0:flag_eval]
+            self.train_df.head(flag_train).to_csv(os.path.join(self.train_path, 'train_df.csv'), index_label=False)
+            self.eval_df.head(flag_eval).to_csv(os.path.join(self.eval_path, 'eval_df.csv'), index_label=False)
             if self.test_df is not None:
+                self.test_df.head(flag_test).to_csv(os.path.join(self.test_path, 'test_df.csv'), index_label=False)
                 video_ids += self.test_df[0].tolist()[0:flag_test]
                 starts += self.test_df[1].tolist()[0:flag_test]
                 ends += self.test_df[2].tolist()[0:flag_test]
@@ -328,6 +331,31 @@ class Kinetic700Fetcher(DatasetFetcher):
         self.logger.write('total failures in eval: ' + str(self.total_eval_fails) + '\n')
         self.logger.write('total failures in test: ' + str(self.total_test_fails) + '\n')
 
+class CheckerKinetic700(object):
+    def __init__(self, dl_path, train_info_path, test_info_path, eval_info_path):
+        self.dl_path = dl_path
+        self.train_info_path = train_info_path
+        self.test_info_path = test_info_path
+        self.eval_info_path = eval_info_path
+    def check(self):
+        logger = open(os.path.join(self.dl_path, 'info.txt'), 'w')
+        df_train = pd.read_csv(self.train_info_path)
+        df_test = pd.read_csv(self.test_info_path)
+        df_eval = pd.read_csv(self.eval_info_path)
+        train_path = os.path.join(self.dl_path, 'train')
+        eval_path = os.path.join(self.dl_path, 'eval')
+        test_path = os.path.join(self.dl_path, 'test')
+        for index, row in df_train.iterrows():
+            if not os.path.exists(os.path.join(train_path, row[3], row[0] + '(t).mp4')):
+                logger.write('train: ' + row[0] + ', ' + row[3] + '\n')
+        for index, row in df_eval.iterrows():
+            if not os.path.exists(os.path.join(eval_path, row[3], row[0] + '(t).mp4')):
+                logger.write('eval: ' + row[0] + ', ' + row[3] + '\n')
+        for index, row in df_test.iterrows():
+            if not os.path.exists(os.path.join(test_path, row[0] + '(t).mp4')):
+                logger.write('test: ' + row[0] + '\n')
+        logger.close()
+
 
 
 
@@ -337,19 +365,21 @@ if __name__ == '__main__':
     test_path_audioset = './datasets/datasets/AudioSetCSV/eval_segments.csv'
     classes_audioset = ['/m/09x0r', "/m/05zppz", "/m/02zsn", "/m/0ytgt", "/m/01h8n0", "/m/02qldy", "/m/0261r1", "/m/0brhx"]
     dl_path = './datasets/datasets/'
-    fetcher_config_audioset = {
-        'split': 0.1,
-        'output_path': dl_path,
-        'class_labels': classes_audioset,
-        'train_csv_path': train_path_audioset,
-        'test_csv_path': test_path_audioset,
-        'eval_csv_path': eval_path_audioset,
-        '_rng': 1
-    }
+    # fetcher_config_audioset = {
+    #     'split': 0.1,
+    #     'output_path': dl_path,
+    #     'class_labels': classes_audioset,
+    #     'train_csv_path': train_path_audioset,
+    #     'test_csv_path': test_path_audioset,
+    #     'eval_csv_path': eval_path_audioset,
+    #     '_rng': 1
+    # }
+    #
     train_path_kinetic = './datasets/datasets/kinetics700_2020/train.csv'
     eval_path_kinetic = './datasets/datasets/kinetics700_2020/validate.csv'
     test_path_kinetic = './datasets/datasets/kinetics700_2020/test.csv'
-    classes_kinetic = ['playing tennis', "shaving head"]
+    classes_kinetic = ['slapping', 'playing drums', 'clapping', 'playing tennis', 'tapping pen']
+    # #154 + 209 + 100 + 111 +
     dl_path = './datasets/datasets/'
     fetcher_config_kinetic = {
         'split': 0.1,
@@ -362,8 +392,14 @@ if __name__ == '__main__':
     }
     fetcher = Kinetic700Fetcher(**fetcher_config_kinetic)
     start = timer()
-    fetcher.fetch_dataset(10, 10, 10, num_processes=32)
+    fetcher.fetch_dataset(30, 10, 10, num_processes=8)
     end = timer()
     print('time(s) = ', end-start)
-
-    # print(cpu_count())
+    #
+    # train_info_path = os.path.join(dl_path, 'Kinetic700', 'train', 'train_df.csv')
+    # eval_info_path = os.path.join(dl_path, 'Kinetic700', 'eval', 'eval_df.csv')
+    # test_info_path = os.path.join(dl_path, 'Kinetic700', 'test', 'test_df.csv')
+    # target = os.path.join(dl_path, 'Kinetic700')
+    #
+    # chekcerkinetic = CheckerKinetic700(target, train_info_path, test_info_path, eval_info_path)
+    # chekcerkinetic.check()
