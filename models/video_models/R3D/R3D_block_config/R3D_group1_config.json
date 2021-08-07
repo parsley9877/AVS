@@ -1,0 +1,12 @@
+{
+    "layer_1": {
+      "filters": 64,
+      "kernel_size": [3, 7, 7],
+      "strides": [1, 2, 2],
+      "padding": "same",
+      "activation": "relu",
+      "use_bias": false,
+      "groups": 1,
+      "kernel_initializer": "glorot_uniform"
+    }
+}

@@ -1,8 +1,10 @@
 import os
 from moviepy.editor import VideoFileClip
+import cv2
+import shutil
 
 
-def shifted_filter(path):
+def shifted_croped_filter(path):
     listOfFiles = get_list_of_mp4(path)
     for file in listOfFiles:
         if os.path.basename(file).startswith('('):
@@ -41,6 +43,51 @@ def bad_duration_filter(path, low, high):
             clip.close()
         except:
             pass
+def list_of_all_durations(path):
+    listOfFiles = get_list_of_mp4(path)
+    o = []
+    for elem in listOfFiles:
+        try:
+            clip = VideoFileClip(elem)
+            o.append(clip.duration)
+            clip.close()
+        except:
+            pass
+    return o
+def list_of_all_fps(path):
+    listOfFiles = get_list_of_mp4(path)
+    o = []
+    for elem in listOfFiles:
+        try:
+            clip = VideoFileClip(elem)
+            o.append(clip.fps)
+            clip.close()
+        except:
+            pass
+    return o
+def list_of_all_sizes(path):
+    listOfFiles = get_list_of_mp4(path)
+    o = []
+    for elem in listOfFiles:
+        try:
+            clip = VideoFileClip(elem)
+            o.append(clip.size)
+            clip.close()
+        except:
+            pass
+    return o
+def list_of_all_nf(path):
+    listOfFiles = get_list_of_mp4(path)
+    o = []
+    for elem in listOfFiles:
+        try:
+            cap = cv2.VideoCapture(elem)
+            num_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            o.append(num_frames)
+            cap.release()
+        except:
+            pass
+    return o
 def bad_mp4_finder(path):
     out = []
     listOfFiles = get_list_of_mp4(path)
@@ -66,8 +113,7 @@ def bad_mp4_filter(path):
 def get_list_of_mp4(path):
     listOfFiles = list()
     for (dirpath, dirnames, filenames) in os.walk(path):
-        if False in [(f.endswith('.txt') or f.endswith('.tfrecords') or f.endswith('.csv')) for f in filenames]:
-            listOfFiles += [os.path.join(dirpath, file) for file in filenames if file.endswith('.mp4')]
+        listOfFiles += [os.path.join(dirpath, file) for file in filenames if file.endswith('.mp4')]
     return listOfFiles
 def get_list_of_all_files(path):
     listOfFiles = list()
@@ -84,3 +130,10 @@ def corrupted_mp4_finder(path):
         except:
             out.append(file)
     return out
+
+def if_exists_delete(path):
+    if os.path.exists(path):
+        shutil.rmtree(path)
+        os.mkdir(path)
+    else:
+        os.mkdir(path)

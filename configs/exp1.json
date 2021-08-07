@@ -1,0 +1,21 @@
+{
+  "setup": {
+    "global_batch_size": 16,
+    "replicas": 4,
+    "epochs": 10
+  },
+  "dataset": {
+    "dataset": "kinetic700",
+    "preprocessing_style": 0
+  },
+  "model": {
+    "parallel": true,
+    "video": ["R3D", "./models/video_models/R3D/R3D_SoftSTAttention/R3D18_SoftSTAttention.json"],
+    "audio": ["PlainModel", "./models/audio_models/VGGM/VGGM_config.json"]
+  },
+  "optimizer": {
+    "lr_scheduling": "annealing",
+    "weight_decay": "0.01",
+    "lr0": 0.001
+  }
+}

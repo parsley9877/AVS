@@ -19,19 +19,19 @@ class MFCC(keras.Model):
         :param specs: specs of MFCC algorithm. Look at the json file in this directory for more info.
         :param delta: the order of MFCC deltas needed to append (0<=delta<=2)
         """
+        super(MFCC, self).__init__()
 
         self.specs = specs
         self.delta = delta
 
-    def process(self, signal: tf.Tensor):
+    def process(self, signal):
         """
         Description: returns MFCC features of signal
 
         :param signal: a 1D tf.Tensor
         :return: a (:, :) or (:, :, 2) or (:, :, 3) feature MFCC feature matrix
         """
-        signal_numpy = signal.numpy()
-        mfcc_numpy = mfcc(signal_numpy, **self.specs)
+        mfcc_numpy = mfcc(signal, **self.specs)
         if self.delta == 0:
             result = mfcc_numpy
             pass

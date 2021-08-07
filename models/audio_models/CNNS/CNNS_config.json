@@ -1,0 +1,225 @@
+{
+  "layer_1": {
+    "type": "Conv2D",
+    "config": {
+      "filters": 96,
+      "kernel_size": [7, 7],
+      "strides": [2, 2],
+      "padding": "valid",
+      "data_format": null,
+      "dilation_rate": [1, 1],
+      "groups": 1,
+      "activation": "relu",
+      "use_bias": true,
+      "kernel_initializer": "glorot_uniform",
+      "bias_initializer": "zeros",
+      "kernel_regularizer": null,
+      "bias_regularizer": null,
+      "activity_regularizer": null,
+      "kernel_constraint": null,
+      "bias_constraint": null
+    }
+  },
+  "layer_2": {
+    "type": "LRN",
+    "config": {
+      "depth_radius": 5,
+      "bias": 2,
+      "alpha": 1e-4,
+      "beta": 0.75
+    }
+  },
+  "layer_3": {
+    "type": "MaxPooling2D",
+    "config": {
+      "pool_size": [1, 3],
+      "strides": null,
+      "padding": "valid"
+    }
+  },
+  "layer_4": {
+    "type": "ZeroPadding2D",
+    "config": {
+      "padding": [[1, 1], [1, 1]]
+    }
+  },
+  "layer_5": {
+    "type": "Conv2D",
+    "config": {
+      "filters": 256,
+      "kernel_size": [5, 5],
+      "strides": [1, 1],
+      "padding": "valid",
+      "data_format": null,
+      "dilation_rate": [1, 1],
+      "groups": 1,
+      "activation": "relu",
+      "use_bias": true,
+      "kernel_initializer": "glorot_uniform",
+      "bias_initializer": "zeros",
+      "kernel_regularizer": null,
+      "bias_regularizer": null,
+      "activity_regularizer": null,
+      "kernel_constraint": null,
+      "bias_constraint": null
+    }
+  },
+  "layer_6": {
+    "type": "MaxPooling2D",
+    "config": {
+      "pool_size": [2, 2],
+      "strides": null,
+      "padding": "valid"
+    }
+  },
+  "layer_7": {
+    "type": "ZeroPadding2D",
+    "config": {
+      "padding": [[1, 1], [1, 1]]
+    }
+  },
+  "layer_8": {
+    "type": "Conv2D",
+    "config": {
+      "filters": 512,
+      "kernel_size": [3, 3],
+      "strides": [1, 1],
+      "padding": "valid",
+      "data_format": null,
+      "dilation_rate": [1, 1],
+      "groups": 1,
+      "activation": "relu",
+      "use_bias": true,
+      "kernel_initializer": "glorot_uniform",
+      "bias_initializer": "zeros",
+      "kernel_regularizer": null,
+      "bias_regularizer": null,
+      "activity_regularizer": null,
+      "kernel_constraint": null,
+      "bias_constraint": null
+    }
+  },
+  "layer_9": {
+    "type": "ZeroPadding2D",
+    "config": {
+      "padding": [[1, 1], [1, 1]]
+    }
+  },
+  "layer_10": {
+    "type": "Conv2D",
+    "config": {
+      "filters": 512,
+      "kernel_size":[3, 3],
+      "strides": [1, 1],
+      "padding": "valid",
+      "data_format": null,
+      "dilation_rate": [1, 1],
+      "groups": 1,
+      "activation": "relu",
+      "use_bias": true,
+      "kernel_initializer": "glorot_uniform",
+      "bias_initializer": "zeros",
+      "kernel_regularizer": null,
+      "bias_regularizer": null,
+      "activity_regularizer": null,
+      "kernel_constraint": null,
+      "bias_constraint": null
+    }
+  },
+  "layer_11": {
+    "type": "ZeroPadding2D",
+    "config": {
+      "padding": [[1, 1], [1, 1]]
+    }
+  },
+  "layer_12": {
+    "type": "Conv2D",
+    "config": {
+      "filters": 512,
+      "kernel_size":[3, 3],
+      "strides": [1, 1],
+      "padding": "valid",
+      "data_format": null,
+      "dilation_rate": [1, 1],
+      "groups": 1,
+      "activation": "relu",
+      "use_bias": true,
+      "kernel_initializer": "glorot_uniform",
+      "bias_initializer": "zeros",
+      "kernel_regularizer": null,
+      "bias_regularizer": null,
+      "activity_regularizer": null,
+      "kernel_constraint": null,
+      "bias_constraint": null
+    }
+  },
+  "layer_13": {
+    "type": "MaxPooling2D",
+    "config": {
+      "pool_size": [3, 3],
+      "strides": null,
+      "padding": "valid"
+    }
+  },
+  "layer_14": {
+    "type": "Dense",
+    "config": {
+      "units": 4096,
+      "activation": "relu",
+      "use_bias": true,
+      "kernel_initializer": "glorot_uniform",
+      "bias_initializer": "zeros",
+      "kernel_regularizer": null,
+      "bias_regularizer": null,
+      "activity_regularizer": null,
+      "kernel_constraint": null,
+      "bias_constraint": null
+    }
+  },
+  "layer_15": {
+    "type": "Dropout",
+    "config": {
+      "rate": 0.1,
+      "noise_shape": null,
+      "seed": 0
+    }
+  },
+  "layer_16": {
+    "type": "Dense",
+    "config": {
+      "units": 4096,
+      "activation": "relu",
+      "use_bias": true,
+      "kernel_initializer": "glorot_uniform",
+      "bias_initializer": "zeros",
+      "kernel_regularizer": null,
+      "bias_regularizer": null,
+      "activity_regularizer": null,
+      "kernel_constraint": null,
+      "bias_constraint": null
+    }
+  },
+  "layer_17": {
+    "type": "Dropout",
+    "config": {
+      "rate": 0.1,
+      "noise_shape": null,
+      "seed": 0
+    }
+  },
+  "layer_18": {
+    "type": "Dense",
+    "config": {
+      "units": 256,
+      "activation": "relu",
+      "use_bias": true,
+      "kernel_initializer": "glorot_uniform",
+      "bias_initializer": "zeros",
+      "kernel_regularizer": null,
+      "bias_regularizer": null,
+      "activity_regularizer": null,
+      "kernel_constraint": null,
+      "bias_constraint": null
+    }
+  }
+}

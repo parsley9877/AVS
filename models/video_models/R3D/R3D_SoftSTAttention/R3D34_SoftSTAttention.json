@@ -1,0 +1,54 @@
+{
+  "group1": {
+    "num_blocks": 1,
+    "type": ["3D"],
+    "dim": [3]
+  },
+  "group2": {
+    "num_blocks": 3,
+    "type": ["3D", "3D", "3D"],
+    "dim": [3, 3, 3]
+  },
+  "group3": {
+    "num_blocks": 4,
+    "type": ["2+1D", "2+1D", "2+1D", "2+1D"],
+    "dim": [3, 3, 3, 3]
+  },
+  "group4": {
+    "num_blocks": 6,
+    "type": ["2+1D", null, null, null, null, null],
+    "dim": [3, 2, 2, 2, 2, 2]
+  },
+  "group5": {
+    "num_blocks": 3,
+    "type": ["2+1D", null, null],
+    "dim": [3, 2, 2]
+  },
+  "attention_0": {
+    "type": "SpatioTemporalSoftAttentionLayer",
+    "config": {
+
+    }
+  },
+  "pooling_0": {
+    "type": "GlobalAvgPool3D",
+    "config": {
+      "data_format": "channels_last"
+    }
+  },
+  "linear_0": {
+    "type": "Dense",
+    "config": {
+      "units": 256,
+      "activation": "relu",
+      "use_bias": true,
+      "kernel_initializer": "glorot_uniform",
+      "bias_initializer": "zeros",
+      "kernel_regularizer": null,
+      "bias_regularizer": null,
+      "activity_regularizer": null,
+      "kernel_constraint": null,
+      "bias_constraint": null
+    }
+  }
+}

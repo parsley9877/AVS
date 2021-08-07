@@ -359,7 +359,7 @@ class CheckerKinetic700(object):
 
 
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
 #     train_path_audioset = './datasets/datasets/AudioSetCSV/balanced_train_segments.csv'
 #     eval_path_audioset = None
 #     test_path_audioset = './datasets/datasets/AudioSetCSV/eval_segments.csv'
@@ -375,31 +375,30 @@ class CheckerKinetic700(object):
 #     #     '_rng': 1
 #     # }
 #     #
-#     train_path_kinetic = './datasets/datasets/kinetics700_2020/train.csv'
-#     eval_path_kinetic = './datasets/datasets/kinetics700_2020/validate.csv'
-#     test_path_kinetic = './datasets/datasets/kinetics700_2020/test.csv'
-#     classes_kinetic = ['slapping', 'playing drums', 'clapping', 'playing tennis', 'tapping pen']
-#     # #154 + 209 + 100 + 111 +
-#     dl_path = './datasets/datasets/'
-#     fetcher_config_kinetic = {
-#         'split': 0.1,
-#         'output_path': dl_path,
-#         'class_labels': classes_kinetic,
-#         'train_csv_path': train_path_kinetic,
-#         'test_csv_path': test_path_kinetic,
-#         'eval_csv_path': eval_path_kinetic,
-#         '_rng': 1
-#     }
-#     fetcher = Kinetic700Fetcher(**fetcher_config_kinetic)
-#     start = timer()
-#     fetcher.fetch_dataset(30, 10, 10, num_processes=8)
-#     end = timer()
-#     print('time(s) = ', end-start)
-#     #
-#     # train_info_path = os.path.join(dl_path, 'Kinetic700', 'train', 'train_df.csv')
-#     # eval_info_path = os.path.join(dl_path, 'Kinetic700', 'eval', 'eval_df.csv')
-#     # test_info_path = os.path.join(dl_path, 'Kinetic700', 'test', 'test_df.csv')
-#     # target = os.path.join(dl_path, 'Kinetic700')
-#     #
-#     # chekcerkinetic = CheckerKinetic700(target, train_info_path, test_info_path, eval_info_path)
-#     # chekcerkinetic.check()
+    train_path_kinetic = './datasets/datasets/kinetics700_2020/train.csv'
+    eval_path_kinetic = './datasets/datasets/kinetics700_2020/validate.csv'
+    test_path_kinetic = './datasets/datasets/kinetics700_2020/test.csv'
+    classes_kinetic = ['slapping', 'playing drums', 'clapping', 'playing tennis', 'tapping pen']
+    # #154 + 209 + 100 + 111 +
+    dl_path = './datasets/datasets/'
+    fetcher_config_kinetic = {
+        'split': 0.1,
+        'output_path': dl_path,
+        'class_labels': classes_kinetic,
+        'train_csv_path': train_path_kinetic,
+        'test_csv_path': test_path_kinetic,
+        'eval_csv_path': eval_path_kinetic,
+        '_rng': 1
+    }
+    # fetcher = Kinetic700Fetcher(**fetcher_config_kinetic)
+    # start = timer()
+    # fetcher.fetch_dataset(50, 50, 50, num_processes=16)
+    # end = timer()
+    # print('time(s) = ', end-start)
+    train_info_path = os.path.join(dl_path, 'Kinetic700', 'train', 'train_df.csv')
+    eval_info_path = os.path.join(dl_path, 'Kinetic700', 'eval', 'eval_df.csv')
+    test_info_path = os.path.join(dl_path, 'Kinetic700', 'test', 'test_df.csv')
+    target = os.path.join(dl_path, 'Kinetic700')
+
+    chekcerkinetic = CheckerKinetic700(target, train_info_path, test_info_path, eval_info_path)
+    chekcerkinetic.check()
