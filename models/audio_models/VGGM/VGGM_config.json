@@ -1,4 +1,10 @@
 {
+  "attention_0": {
+    "type": "SpatialSoftAttentionLayer",
+    "config": {
+
+    }
+  },
   "conv2d_0": {
     "type": "Conv2D",
     "config": {
@@ -70,6 +76,12 @@
       "bias_constraint": null
     }
   },
+  "attention_1": {
+    "type": "SpatialSoftAttentionLayer",
+    "config": {
+
+    }
+  },
   "conv2d_3": {
     "type": "Conv2D",
     "config": {
@@ -112,15 +124,7 @@
       "bias_constraint": null
     }
   },
-  "pool2d_1": {
-    "type": "MaxPooling2D",
-    "config": {
-      "pool_size": [3, 3],
-      "strides": null,
-      "padding": "valid"
-    }
-  },
-  "attention_0": {
+  "attention_2": {
     "type": "SpatialSoftAttentionLayer",
     "config": {
 

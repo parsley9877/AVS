@@ -1,0 +1,28 @@
+{
+  "group1": {
+    "num_blocks": 1,
+    "type": ["3D"],
+    "dim": [3]
+  },
+  "pool3d_0": {
+    "type": "GlobalAvgPool3D",
+    "config": {
+      "data_format": "channels_last"
+    }
+  },
+  "dense_0": {
+    "type": "Dense",
+    "config": {
+      "units": 256,
+      "activation": "relu",
+      "use_bias": true,
+      "kernel_initializer": "glorot_uniform",
+      "bias_initializer": "zeros",
+      "kernel_regularizer": null,
+      "bias_regularizer": null,
+      "activity_regularizer": null,
+      "kernel_constraint": null,
+      "bias_constraint": null
+    }
+  }
+}

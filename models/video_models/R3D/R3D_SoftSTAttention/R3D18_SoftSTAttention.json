@@ -1,4 +1,10 @@
 {
+  "attention_0": {
+    "type": "SpatioTemporalSoftAttentionLayer",
+    "config": {
+
+    }
+  },
   "group1": {
     "num_blocks": 1,
     "type": ["3D"],
@@ -14,17 +20,23 @@
     "type": ["2+1D", "2+1D"],
     "dim": [3, 3]
   },
+  "attention_1": {
+    "type": "SpatioTemporalSoftAttentionLayer",
+    "config": {
+
+    }
+  },
   "group4": {
     "num_blocks": 2,
-    "type": [null, null],
-    "dim": [2, 2]
+    "type": ["2+1D", "2+1D"],
+    "dim": [3, 3]
   },
   "group5": {
     "num_blocks": 2,
     "type": [null, null],
     "dim": [2, 2]
   },
-  "attention_0": {
+  "attention_2": {
     "type": "SpatioTemporalSoftAttentionLayer",
     "config": {
 

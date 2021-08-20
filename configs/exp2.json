@@ -1,7 +1,7 @@
 {
   "setup": {
-    "global_batch_size": 16,
-    "replicas": [0, 1, 2, 3],
+    "global_batch_size": 128,
+    "replicas": [0, 1,2,3],
     "epochs": 500
   },
   "dataset": {
@@ -17,7 +17,7 @@
   },
   "model": {
     "parallel": true,
-    "video": ["R3D", "./models/video_models/R3D/R3D_SoftSTAttention/R3D18_SoftSTAttention.json"],
+    "video": ["R3D", "./models/video_models/simple_models/simple_v1.json"],
     "audio": ["PlainModel", "./models/audio_models/VGGM/VGGM_config.json"]
   },
   "optimizer": {
@@ -30,8 +30,8 @@
     "lr_policy": {
       "name": "cosine_annealing",
       "configs": {
-        "lr_min": 1e-6,
-        "lr_max": 1e-4,
+        "lr_min": 1e-5,
+        "lr_max": 1e-3,
         "t": 10
       }
     }

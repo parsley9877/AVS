@@ -1,2 +1,0 @@
-#Runs BasicPreprocessing test experiment
-python test_experiments/BasicPreprocessing_test/main.py

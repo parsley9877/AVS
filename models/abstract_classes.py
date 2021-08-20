@@ -3,13 +3,18 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.layers import Conv2D, Conv3D, ReLU, Conv1D, Permute,\
     GlobalAvgPool3D, Dense, MaxPooling2D, ZeroPadding2D, Dropout, Flatten, Add
+from memory_profiler import profile
 import os
 import json
 import copy
 from typing import Tuple, Iterable
 import sys
+
 sys.path.append(os.path.join(os.getcwd(), 'configs'))
+sys.path.append(os.path.join(os.getcwd(), 'utils'))
 from global_namespace import PATH_TO_PROJECT
+from video.preprocessing import BasicPreprocessing
+
 
 def list_to_tuple(dictionary):
     spec = copy.deepcopy(dictionary)
@@ -20,6 +25,7 @@ def list_to_tuple(dictionary):
                     spec[key][i] = tuple(spec[key][i])
             spec[key] = tuple(spec[key])
     return spec
+
 
 class Conv1x1(keras.layers.Layer):
     def __init__(self, dim, num_filters, strides, padding, activation, use_bias,
@@ -39,23 +45,9 @@ class Conv1x1(keras.layers.Layer):
             use_bias=use_bias, kernel_initializer=kernel_initializer,
             strides=strides, bias_initializer=bias_initializer
         )
+
     def call(self, input, **kwargs):
         return self.core_layer(input)
-
-
-class ParallelNet(keras.Model):
-    def __init__(self, video_network, audio_network):
-        super(ParallelNet, self).__init__()
-        with open(video_network[1]) as json_obj:
-            video_model_spec = json.load(json_obj)
-        with open(audio_network[1]) as json_obj:
-            audio_model_spec = json.load(json_obj)
-        self.video_subnet = video_network[0](video_model_spec)
-        self.audio_subnet = audio_network[0](audio_model_spec)
-    def __call__(self, input: Tuple):
-        video_net_output = self.video_subnet(input[0])
-        audio_net_output = self.audio_subnet(input[1])
-        return (video_net_output, audio_net_output)
 
 
 class SpatioTemporalSoftAttentionLayer(keras.layers.Layer):
@@ -65,9 +57,11 @@ class SpatioTemporalSoftAttentionLayer(keras.layers.Layer):
             dim=3, num_filters=1, strides=(1, 1, 1), padding='same', activation='softmax', use_bias=False,
             kernel_initializer='glorot_uniform', bias_initializer='zeros'
         )
+
     def call(self, inputs, **kwargs):
         weights = self.weight_generator(inputs)
         return tf.math.multiply(inputs, weights)
+
 
 class SpatialSoftAttentionLayer(keras.layers.Layer):
     def __init__(self):
@@ -76,9 +70,11 @@ class SpatialSoftAttentionLayer(keras.layers.Layer):
             dim=2, num_filters=1, strides=(1, 1), padding='same', activation='softmax', use_bias=False,
             kernel_initializer='glorot_uniform', bias_initializer='zeros'
         )
+
     def call(self, inputs, **kwargs):
         weights = self.weight_generator(inputs)
         return tf.math.multiply(inputs, weights)
+
 
 class BasicBlock_R3D(keras.Model):
     def __init__(self, group_num, dim, striding_version, type_block=None):
@@ -100,8 +96,10 @@ class BasicBlock_R3D(keras.Model):
         if type_block != '2+1D':
             for layer_key in block_config:
                 block_config[layer_key]['kernel_size'] = tuple(block_config[layer_key]['kernel_size'][-dim:])
-                block_config[layer_key]['strides'] = tuple(block_config[layer_key]['strides'][-dim:]) if striding_version == 'main' else tuple(dim * [1])
-                freeway_stride = tuple(np.multiply(block_config[layer_key]['strides'], freeway_stride)) if striding_version == 'main' else tuple(dim * [1])
+                block_config[layer_key]['strides'] = tuple(block_config[layer_key]['strides'][-dim:])\
+                    if striding_version == 'main' else tuple(dim * [1])
+                freeway_stride = tuple(np.multiply(block_config[layer_key]['strides'], freeway_stride))\
+                    if striding_version == 'main' else tuple(dim * [1])
                 freeway_filters = block_config[layer_key]['filters']
                 self.layer.add(principal_layer(**block_config[layer_key]))
         elif type_block == '2+1D':
@@ -128,8 +126,9 @@ class BasicBlock_R3D(keras.Model):
         ])
         self.adding_layer = Add()
 
-    def call(self, input, training=None, mask=None):
-        return self.adding_layer([self.freeway(input), self.layer(input)])
+    def call(self, inputs, training=None, mask=None):
+        return self.adding_layer([self.freeway(inputs), self.layer(inputs)])
+
 
 class R3D(keras.Model):
     def __init__(self, spec):
@@ -149,6 +148,7 @@ class R3D(keras.Model):
                 setattr(self, layer_or_block, keras.Sequential([
                     eval(spec[layer_or_block]['type'])(**spec[layer_or_block]['config'])
                 ], name=layer_or_block))
+
     def call(self, inputs, training=None, mask=None):
         x = inputs
         for layer_or_block in self.spec:
@@ -159,6 +159,7 @@ class R3D(keras.Model):
                 x = getattr(self, layer_or_block)(x)
         return x
 
+
 class LRN(keras.layers.Layer):
     def __init__(self, depth_radius=5, bias=1, alpha=1, beta=0.5):
         super(LRN, self).__init__()
@@ -166,8 +167,10 @@ class LRN(keras.layers.Layer):
         self.bias = bias
         self.alpha = alpha
         self.beta = beta
+
     def call(self, inputs, **kwargs):
         return tf.nn.local_response_normalization(inputs, self.depth_radius, self.bias, self.alpha, self.beta)
+
 
 class PlainModel(keras.Model):
     def __init__(self, spec):
@@ -177,11 +180,42 @@ class PlainModel(keras.Model):
             setattr(self, layer, keras.Sequential([
                 eval(spec[layer]['type'])(**list_to_tuple(spec[layer]['config']))
             ], name=layer))
+
     def call(self, inputs, training=None, mask=None):
         x = inputs
         for layer in self.spec:
             x = getattr(self, layer)(x)
         return x
+
+@profile
+def model_maker():
+    with open('./models/video_models/simple_models/simple_v1.json') as json_obj:
+        video_model_config = json.load(json_obj)
+    with open("./models/audio_models/VGGM/VGGM_config.json") as json_obj:
+        audio_model_config = json.load(json_obj)
+    video_model = R3D(video_model_config)
+    audio_model = PlainModel(audio_model_config)
+    audio_model.build(input_shape=(None, 24, 64, 3))
+    video_model.build(input_shape=(None, 80, 128, 128, 3))
+    audio_model.summary()
+    video_model.summary()
+
+    video_input_layer = keras.Input(shape=(80, 128, 128, 3))
+    audio_input_layer = keras.Input(shape=(24, 64, 3))
+    video_preprocessing = BasicPreprocessing('type2', 3, (0.5, 0.5, 0.5), (0.25, 0.25, 0.25))(video_input_layer)
+    video_net = R3D(video_model_config)(video_preprocessing)
+    audio_net = PlainModel(audio_model_config)(audio_input_layer)
+    model = keras.Model(
+        inputs=[video_input_layer, audio_input_layer],
+        outputs=[video_net, audio_net],
+    )
+    vid_batch = tf.random.uniform((32,80,128,128,3), -1, 1)
+    audio_batch = tf.random.uniform((32, 24, 64, 3), -1, 1)
+
+    v_o, a_o = model([vid_batch, audio_batch])
+
+if __name__ == '__main__':
+    model_maker()
 
 
 

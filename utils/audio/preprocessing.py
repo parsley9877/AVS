@@ -31,7 +31,7 @@ class MFCC(keras.Model):
         :param signal: a 1D tf.Tensor
         :return: a (:, :) or (:, :, 2) or (:, :, 3) feature MFCC feature matrix
         """
-        mfcc_numpy = mfcc(signal, **self.specs)
+        mfcc_numpy = np.transpose(mfcc(signal, **self.specs))
         if self.delta == 0:
             result = mfcc_numpy
             pass
