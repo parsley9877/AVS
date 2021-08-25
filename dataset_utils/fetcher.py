@@ -9,6 +9,10 @@ from timeit import default_timer as timer
 from pathos.multiprocessing import ProcessingPool as Pool
 import shutil
 import json
+import sys
+
+sys.path.append(os.path.join(os.getcwd(), 'configs'))
+from global_namespace import PATH_TO_PERSISTENT_STORAGE
 
 
 class DatasetFetcher(object):
@@ -299,41 +303,41 @@ if __name__ == '__main__':
 #     eval_path_audioset = None
 #     test_path_audioset = './datasets/datasets/AudioSetCSV/eval_segments.csv'
 #     classes_audioset = ['/m/09x0r', "/m/05zppz", "/m/02zsn", "/m/0ytgt", "/m/01h8n0", "/m/02qldy", "/m/0261r1", "/m/0brhx"]
-    dl_path = './datasets/datasets/'
-#     # fetcher_config_audioset = {
-#     #     'split': 0.1,
-#     #     'output_path': dl_path,
-#     #     'class_labels': classes_audioset,
-#     #     'train_csv_path': train_path_audioset,
-#     #     'test_csv_path': test_path_audioset,
-#     #     'eval_csv_path': eval_path_audioset,
-#     #     '_rng': 1
-#     # }
-#     #
-#     train_path_kinetic = './datasets/datasets/kinetics700_2020/train.csv'
-#     eval_path_kinetic = './datasets/datasets/kinetics700_2020/validate.csv'
-#     test_path_kinetic = './datasets/datasets/kinetics700_2020/test.csv'
-#     classes_kinetic = ['slapping', 'clapping', 'side kick', 'dribbling basketball',
-#                        'breaking boards', 'tapping pen', 'hitting baseball', 'ripping paper', 'playing drums']
 #     dl_path = './datasets/datasets/'
-#     fetcher_config_kinetic = {
-#         'split': 0.1,
-#         'output_path': dl_path,
-#         'class_labels': classes_kinetic,
-#         'train_csv_path': train_path_kinetic,
-#         'test_csv_path': test_path_kinetic,
-#         'eval_csv_path': eval_path_kinetic,
-#         '_rng': 1
-#     }
-#     fetcher = Kinetic700Fetcher(**fetcher_config_kinetic)
-#     start = timer()
-#     fetcher.fetch_dataset(None, 1, None, num_processes=16)
-#     end = timer()
-#     print('time(s) = ', end-start)
-    train_info_path = os.path.join(dl_path, 'Kinetic700_source', 'train', 'train_df.csv')
-    eval_info_path = os.path.join(dl_path, 'Kinetic700_source', 'eval', 'eval_df.csv')
-    test_info_path = os.path.join(dl_path, 'Kinetic700_source', 'test', 'test_df.csv')
-    target = os.path.join(dl_path, 'Kinetic700_source')
+    # fetcher_config_audioset = {
+    #     'split': 0.1,
+    #     'output_path': dl_path,
+    #     'class_labels': classes_audioset,
+    #     'train_csv_path': train_path_audioset,
+    #     'test_csv_path': test_path_audioset,
+    #     'eval_csv_path': eval_path_audioset,
+    #     '_rng': 1
+    # }
+#     #
+    train_path_kinetic = './datasets/datasets/kinetics700_2020/train.csv'
+    eval_path_kinetic = './datasets/datasets/kinetics700_2020/validate.csv'
+    test_path_kinetic = './datasets/datasets/kinetics700_2020/test.csv'
+    classes_kinetic = ['slapping', 'clapping', 'side kick', 'dribbling basketball',
+                       'breaking boards', 'tapping pen', 'hitting baseball', 'ripping paper', 'playing drums']
+    # dl_path = './datasets/datasets/'
+    fetcher_config_kinetic = {
+        'split': 0.1,
+        'output_path': PATH_TO_PERSISTENT_STORAGE,
+        'class_labels': classes_kinetic,
+        'train_csv_path': train_path_kinetic,
+        'test_csv_path': test_path_kinetic,
+        'eval_csv_path': eval_path_kinetic,
+        '_rng': 1
+    }
+    fetcher = Kinetic700Fetcher(**fetcher_config_kinetic)
+    start = timer()
+    fetcher.fetch_dataset(None, 1, None, num_processes=16)
+    end = timer()
+    print('time(s) = ', end-start)
+    # train_info_path = os.path.join(PATH_TO_PERSISTENT_STORAGE, 'Kinetic700_source', 'train', 'train_df.csv')
+    # eval_info_path = os.path.join(PATH_TO_PERSISTENT_STORAGE, 'Kinetic700_source', 'eval', 'eval_df.csv')
+    # test_info_path = os.path.join(dl_path, 'Kinetic700_source', 'test', 'test_df.csv')
+    # target = os.path.join(dl_path, 'Kinetic700_source')
 
-    chekcerkinetic = CheckerKinetic700(target, train_info_path, test_info_path, eval_info_path)
-    chekcerkinetic.check()
+    # chekcerkinetic = CheckerKinetic700(target, train_info_path, test_info_path, eval_info_path)
+    # chekcerkinetic.check()
