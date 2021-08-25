@@ -1,8 +1,11 @@
 {
   "setup": {
-    "global_batch_size": 16,
-    "replicas": [0, 1, 2, 3],
-    "epochs": 500
+    "global_batch_size": 8,
+    "replicas": [2, 3, 4, 5],
+    "epochs": 200,
+    "use_weight_checkpoint": true,
+    "use_metric_checkpoint": true,
+    "use_state_checkpoint": true
   },
   "dataset": {
     "name": "Kinetic700_source",
@@ -31,12 +34,12 @@
       "name": "cosine_annealing",
       "configs": {
         "lr_min": 1e-6,
-        "lr_max": 1e-4,
-        "t": 10
+        "lr_max": 1e-5,
+        "t": 100
       }
     }
   },
   "inference_config": {
-    "threshold": 0.25
+    "threshold": 0.05
   }
 }
