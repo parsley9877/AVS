@@ -331,7 +331,7 @@ if __name__ == '__main__':
     }
     fetcher = Kinetic700Fetcher(**fetcher_config_kinetic)
     start = timer()
-    fetcher.fetch_dataset(None, 1, None, num_processes=16)
+    fetcher.fetch_dataset(None, 1, None, num_processes=8)
     end = timer()
     print('time(s) = ', end-start)
     # train_info_path = os.path.join(PATH_TO_PERSISTENT_STORAGE, 'Kinetic700_source', 'train', 'train_df.csv')
